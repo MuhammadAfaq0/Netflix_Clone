@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Choose Profile — Netflix Clone</title>
+
+  <style>
+    html,body{height:100%;margin:0;font-family:Segoe UI,Roboto,Arial,sans-serif;background:#000;color:#fff}
+    .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:48px 20px 28px}
+    .top{width:100%;max-width:980px;display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+    .logo{font-weight:700;color:#e50914;font-size:28px}
+    h1{font-size:28px;margin:0 0 18px}
+
+    .profiles{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:center}
+    .profile{width:160px;height:160px;background:rgba(255,255,255,0.04);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s,box-shadow .12s;position:relative}
+    .profile:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(0,0,0,0.6)}
+
+    .avatar{width:84px;height:84px;border-radius:12px;background:#222;display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff;margin-bottom:10px}
+    .pname{font-size:16px;color:#e6e6e6}
+
+    .manage{margin-top:26px;color:#8c8c8c;text-decoration:underline;cursor:pointer}
+    .small{font-size:13px;color:#b3b3b3;margin-top:8px}
+
+    .actions{margin-top:22px;display:flex;gap:12px}
+    .btn{background:rgba(255,255,255,0.06);border:0;color:#fff;padding:10px 12px;border-radius:6px;cursor:pointer}
+
+    .del{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.5);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#fff;border:0;cursor:pointer;display:none}
+    .profile.editing .del{display:flex}
+
+    @media (max-width:520px){
+      .profile{width:130px;height:130px}
+      .avatar{width:68px;height:68px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="logo">netflix</div>
+      <div>
+        <button id="addBtn" class="btn">+ Add profile</button>
+        <button id="editBtn" class="btn">Edit</button>
+      </div>
+    </div>
+
+    <h1>Who's watching?</h1>
+
+    <div class="profiles" id="profiles">
+      <!-- Profiles added by JS -->
+    </div>
+
+    <div class="small">Click your profile to continue.</div>
+    <div class="manage" id="manage" style="display:none">Manage Profiles</div>
+  </div>
+
+  <script>
+    (function(){
+      var storageKey = 'profiles';
+      var selectedKey = 'selectedProfile';
+      var defaultProfiles = [
+        {name:'Afaq', emoji:'😎'},
+        {name:'Family', emoji:'👪'},
+        {name:'Alex', emoji:'🎬'},
+        {name:'Guest', emoji:'🧑‍🚀'}
+      ];
+
+      function readProfiles(){
+        try{
+          var raw = localStorage.getItem(storageKey);
+          return raw ? JSON.parse(raw) : defaultProfiles.slice();
+        }catch(e){
+          return defaultProfiles.slice();
+        }
+      }
+
+      function writeProfiles(list){
+        try{ localStorage.setItem(storageKey, JSON.stringify(list)); }catch(e){}
+      }
+
+      var container = document.getElementById('profiles');
+      var addBtn = document.getElementById('addBtn');
+      var editBtn = document.getElementById('editBtn');
+      var editing = false;
+
+      function render(){
+        container.innerHTML = '';
+        var list = readProfiles();
+
+        list.forEach(function(p, idx){
+          var el = document.createElement('div');
+          el.className = 'profile';
+          el.tabIndex = 0;
+          el.setAttribute('data-idx', idx);
+
+          el.innerHTML =
+            '<div class="avatar">'+(p.emoji||"🙂")+'</div>' +
+            '<div class="pname">'+p.name+'</div>';
+
+          var del = document.createElement('button');
+          del.className = 'del';
+          del.title = 'Delete profile';
+          del.innerHTML = '✕';
+
+          del.addEventListener('click', function(ev){
+            ev.stopPropagation();
+            if(!confirm('Delete profile "' + p.name + '"?')) return;
+
+            list.splice(idx,1);
+            writeProfiles(list);
+            render();
+          });
+
+          el.appendChild(del);
+
+          el.addEventListener('click', function(){
+            if(editing) return;
+            localStorage.setItem(selectedKey, p.name);
+            window.location.href = 'home.html';
+          });
+
+          container.appendChild(el);
+        });
+      }
+
+      addBtn.addEventListener('click', function(){
+        var name = prompt('Profile name (e.g. "Sara")');
+        if(!name) return;
+
+        var emoji = prompt('Emoji or character for avatar:', '🙂');
+        var list = readProfiles();
+
+        list.push({name: name.trim(), emoji: emoji || '🙂'});
+        writeProfiles(list);
+        render();
+      });
+
+      editBtn.addEventListener('click', function(){
+        editing = !editing;
+        var profiles = document.querySelectorAll('.profile');
+
+        profiles.forEach(function(el){
+          el.classList.toggle('editing', editing);
+        });
+
+        editBtn.textContent = editing ? 'Done' : 'Edit';
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

@@ -5,22 +5,193 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Netflix Clone — Home</title>
   <style>
-    html,body{height:100%;margin:0;font-family:Segoe UI,Roboto,Arial,sans-serif;background:#000;color:#fff}
-    .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center}
-    h1{font-size:40px;margin:0 0 12px;color:#e50914}
-    p{color:#cfcfcf;margin:0 0 18px}
-    .btn{background:#e50914;color:#fff;padding:10px 14px;border-radius:6px;border:0;cursor:pointer;font-weight:600}
-    a.signout{display:inline-block;margin-top:12px;color:#fff;text-decoration:underline}
+    :root{--bg:#000;--muted:#8f8f8f;--accent:#e50914}
+    html,body{height:100%;margin:0;font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#fff}
+    .app{min-height:100vh}
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 36px;background:linear-gradient(180deg, rgba(0,0,0,0.6), transparent)}
+    .logo{font-weight:700;color:var(--accent);font-size:24px}
+    .nav{display:flex;gap:18px;align-items:center}
+    .profile-cta{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .avatar-sm{width:36px;height:36px;border-radius:6px;background:#222;display:flex;align-items:center;justify-content:center}
+
+    .hero{display:flex;align-items:flex-end;padding:48px 36px;background-image:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.6));min-height:320px}
+    .hero .info{max-width:640px}
+    .hero h2{font-size:44px;margin:0 0 12px}
+    .hero p{color:#d1d1d1;font-size:18px}
+    .hero .cta{margin-top:16px}
+    .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:6px;border:0;cursor:pointer;font-weight:600}
+
+    .rows{padding:24px 18px}
+    .row{margin-bottom:20px}
+    .row h3{margin:0 0 10px;padding-left:8px}
+    .cards{display:flex;gap:12px;overflow:auto;padding:8px 8px}
+    .card{min-width:160px;height:96px;border-radius:6px;background:#222;background-size:cover;background-position:center;flex:0 0 auto;position:relative}
+    .card .title{position:absolute;left:8px;bottom:8px;font-size:13px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.6)}
+
+    /* Hover overlay */
+    .card .overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.6));display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .12s,transform .12s;border-radius:6px}
+    .card:hover{transform:translateY(-6px) scale(1.04);z-index:2}
+    .card:hover .overlay{opacity:1}
+    .ov-actions{display:flex;gap:8px}
+    .ov-btn{background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.08);color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:600}
+
+    /* Row arrows */
+    .row-wrap{position:relative}
+    .arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:80px;background:linear-gradient(90deg, rgba(0,0,0,0.6), transparent);border:0;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .arrow.left{left:6px}
+    .arrow.right{right:6px;background:linear-gradient(-90deg, rgba(0,0,0,0.6), transparent)}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50}
+    .modal-card{background:#0b0b0b;color:#fff;padding:20px;border-radius:8px;max-width:860px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.7)}
+    .modal-hero{height:320px;background-size:cover;background-position:center;border-radius:6px;margin-bottom:14px}
+    .modal-close{position:absolute;top:14px;right:18px;background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer}
+
+    /* Focus outlines */
+    .card:focus{outline:3px solid rgba(229,9,20,0.25)}
+
+    .controls{padding:12px 18px;display:flex;justify-content:flex-end}
+
+    footer{padding:18px;color:var(--muted);font-size:13px;text-align:center}
+
+    @media (max-width:720px){ .hero h2{font-size:28px} .card{min-width:120px;height:80px} }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Welcome — Netflix Clone</h1>
-    <p>This is a demo home page after sign-in. Nothing here is connected to a real backend.</p>
-    <button class="btn" onclick="alert('Demo action — nothing to do here')">Browse Demo</button>
-    <div>
-      <a class="signout" href="index.html">Sign out</a>
+  <div class="app">
+    <header>
+      <div class="logo">NETFLIX</div>
+      <div class="nav">
+        <div id="profileName" style="color:#fff;font-weight:600"></div>
+        <div class="profile-cta" id="profileMenu">
+          <div class="avatar-sm" id="avatarSm">🙂</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="info">
+        <h2 id="featuredTitle">Featured — Demo Movie</h2>
+        <p id="featuredDesc">An exciting demo movie to populate the hero area. This looks like Netflix.</p>
+        <div class="cta"><button class="btn" id="playBtn">Play</button></div>
+      </div>
+    </section>
+
+    <div class="rows" id="rows">
+      <!-- rows inserted by JS -->
     </div>
+
+    <div class="controls"><a href="#" id="switchBtn" style="color:#fff;text-decoration:underline;margin-right:12px">Switch profile</a><a href="index.html" style="color:#fff;text-decoration:underline">Sign out</a></div>
+
+    <footer>Demo Netflix Clone — no real streaming here.</footer>
   </div>
+
+  <script>
+    (function(){
+      // Read selected profile
+      var profile = null;
+      try{ profile = localStorage.getItem('selectedProfile'); }catch(e){ profile = null; }
+      var profileNameEl = document.getElementById('profileName');
+      var avatarSm = document.getElementById('avatarSm');
+      if(!profile){ setTimeout(function(){ window.location.href = 'profiles.html'; }, 600); return; }
+      profileNameEl.textContent = profile;
+      avatarSm.textContent = (profile[0] || '🙂');
+
+      // Demo movie data
+      var categories = [
+        {title:'Popular on Demo', items: [
+          {title:'The Big Show', img:'https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=800&q=60'},
+          {title:'Ocean Blue', img:'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=800&q=60'},
+          {title:'City Lights', img:'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=800&q=60'},
+          {title:'Last Horizon', img:'https://images.unsplash.com/photo-1500336624523-d727130c3328?auto=format&fit=crop&w=800&q=60'}
+        ]},
+        {title:'Trending Now', items: [
+          {title:'Chase', img:'https://images.unsplash.com/photo-1533777324565-a040eb52fac2?auto=format&fit=crop&w=800&q=60'},
+          {title:'Midnight Run', img:'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=800&q=60'},
+          {title:'Escape Plan', img:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=60'}
+        ]},
+        {title:'Watch It Again', items: [
+          {title:'Old Favorite', img:'https://images.unsplash.com/photo-1516110833967-068c3c3d2b2b?auto=format&fit=crop&w=800&q=60'},
+          {title:'Backstage', img:'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=60'}
+        ]}
+      ];
+
+      var rowsEl = document.getElementById('rows');
+
+      function renderRows(){
+        rowsEl.innerHTML = '';
+        categories.forEach(function(cat, rowIndex){
+          var r = document.createElement('div'); r.className = 'row-wrap';
+          var heading = document.createElement('h3'); heading.textContent = cat.title; var row = document.createElement('div'); row.className = 'row'; row.appendChild(heading);
+
+          var cards = document.createElement('div'); cards.className = 'cards'; cards.setAttribute('tabindex','0');
+          cat.items.forEach(function(item){
+            var c = document.createElement('div'); c.className = 'card';
+            c.style.backgroundImage = 'url("'+item.img+'")';
+            c.setAttribute('tabindex','0');
+
+            var t = document.createElement('div'); t.className = 'title'; t.textContent = item.title;
+            var overlay = document.createElement('div'); overlay.className = 'overlay';
+            var actions = document.createElement('div'); actions.className = 'ov-actions';
+            var play = document.createElement('button'); play.className = 'ov-btn'; play.textContent = 'Play';
+            var info = document.createElement('button'); info.className = 'ov-btn'; info.textContent = 'Info';
+            actions.appendChild(play); actions.appendChild(info); overlay.appendChild(actions);
+
+            play.addEventListener('click', function(ev){ ev.stopPropagation(); showModal(item, true); });
+            info.addEventListener('click', function(ev){ ev.stopPropagation(); showModal(item, false); });
+
+            c.appendChild(overlay);
+            c.appendChild(t);
+            c.addEventListener('click', function(){ showModal(item, true); });
+            cards.appendChild(c);
+          });
+
+          // arrows
+          var left = document.createElement('button'); left.className = 'arrow left'; left.innerHTML = '◀';
+          var right = document.createElement('button'); right.className = 'arrow right'; right.innerHTML = '▶';
+          left.addEventListener('click', function(){ cards.scrollBy({left:-420, behavior:'smooth'}); });
+          right.addEventListener('click', function(){ cards.scrollBy({left:420, behavior:'smooth'}); });
+
+          r.appendChild(row);
+          r.appendChild(left);
+          r.appendChild(cards);
+          r.appendChild(right);
+          rowsEl.appendChild(r);
+        });
+      }
+
+      renderRows();
+
+      // Modal creation
+      function showModal(item, autoplay){
+        var existing = document.getElementById('infoModal');
+        if(existing) existing.remove();
+        var modal = document.createElement('div'); modal.id = 'infoModal'; modal.className = 'modal';
+        var card = document.createElement('div'); card.className = 'modal-card';
+        var close = document.createElement('button'); close.className = 'modal-close'; close.innerHTML = '✕';
+        close.addEventListener('click', function(){ modal.remove(); });
+
+        var hero = document.createElement('div'); hero.className = 'modal-hero'; hero.style.backgroundImage = 'url("'+item.img+'")';
+        var title = document.createElement('h2'); title.textContent = item.title;
+        var desc = document.createElement('p'); desc.textContent = item.desc || 'Demo description for '+item.title;
+        var play = document.createElement('button'); play.className = 'btn'; play.textContent = autoplay ? 'Playing...' : 'Play';
+        play.addEventListener('click', function(){ alert((autoplay ? 'Playing ' : 'Play: ') + item.title + '\n(Profile: '+profile+')'); });
+
+        card.appendChild(close);
+        card.appendChild(hero);
+        card.appendChild(title);
+        card.appendChild(desc);
+        card.appendChild(play);
+        modal.appendChild(card);
+        document.body.appendChild(modal);
+        // close on backdrop
+        modal.addEventListener('click', function(e){ if(e.target === modal) modal.remove(); });
+        // ESC to close
+        window.addEventListener('keydown', function escHandler(e){ if(e.key === 'Escape'){ modal.remove(); window.removeEventListener('keydown', escHandler); } });
+      }
+
+      document.getElementById('switchBtn').addEventListener('click', function(e){ e.preventDefault(); try{ localStorage.removeItem('selectedProfile'); }catch(err){} window.location.href = 'profiles.html'; });
+    })();
+  </script>
 </body>
 </html>

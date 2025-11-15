@@ -148,12 +148,12 @@
 						if(submitBtn) submitBtn.disabled = true;
 						showSuccess('Signing in...');
 
-								setTimeout(function(){
-									showSuccess('Signed in (demo). Redirecting...');
-									// Simulated redirect to demo home
-									window.location.href = 'home.html';
-									if(submitBtn) submitBtn.disabled = false;
-								}, 900);
+										setTimeout(function(){
+											showSuccess('Signed in (demo). Redirecting to profile selection...');
+											// Simulated redirect to profiles selection page
+											window.location.href = 'profiles.html';
+											if(submitBtn) submitBtn.disabled = false;
+										}, 900);
 					});
 				})();
 			</script>
