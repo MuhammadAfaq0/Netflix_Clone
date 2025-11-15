@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Netflix Clone — Sign In</title>
+	<style>
+		/* Reset & layout */
+		*{box-sizing:border-box}
+		html,body{height:100%;margin:0;font-family:Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
+
+		/* Hero background similar to Netflix */
+		body{
+			background: radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.85) 100%), url('https://images.unsplash.com/photo-1517602302552-471fe67acf66?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+			color:#fff;
+			-webkit-font-smoothing:antialiased;
+			-moz-osx-font-smoothing:grayscale;
+			display:flex;align-items:center;justify-content:center;padding:40px
+		}
+
+		/* Top nav with logo */
+		.nav{position:absolute;top:20px;left:24px;right:24px;display:flex;justify-content:space-between;align-items:center}
+		.logo{font-weight:700;color:#e50914;font-size:28px;letter-spacing:1px}
+		.lang{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);padding:6px 10px;border-radius:4px;font-size:14px}
+
+		/* Centered card */
+		.wrap{width:100%;max-width:980px;display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:center}
+
+		.hero{padding:40px}
+		.hero h1{font-size:48px;line-height:1.03;margin:0 0 16px;font-weight:700}
+		.hero p{font-size:20px;color:rgba(255,255,255,0.9);margin:0 0 8px}
+
+		.card{background:rgba(0,0,0,0.75);padding:28px;border-radius:8px;border:1px solid rgba(255,255,255,0.06)}
+		.card h2{margin:0 0 18px;font-size:24px}
+
+		label{display:block;font-size:13px;margin-bottom:8px;color:#e6e6e6}
+		input[type="email"],input[type="password"]{width:100%;padding:12px 14px;border-radius:6px;border:0;background:#222;color:#fff;font-size:15px;margin-bottom:14px}
+		input:focus{outline:2px solid rgba(255,255,255,0.08)}
+
+		.controls{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;color:#b3b3b3;font-size:14px}
+		.checkbox{display:flex;gap:8px;align-items:center}
+		.checkbox input{width:16px;height:16px}
+
+		.btn{width:100%;padding:12px;border-radius:6px;border:0;background:#e50914;color:#fff;font-weight:600;font-size:16px;cursor:pointer}
+		.btn:active{transform:translateY(1px)}
+
+		.ghost{background:transparent;border:1px solid rgba(255,255,255,0.12);color:#fff;padding:10px;border-radius:6px;cursor:pointer}
+
+		.help{margin-top:14px;color:#8c8c8c;font-size:13px}
+
+		@media (max-width:900px){
+			.wrap{grid-template-columns:1fr;max-width:520px}
+			.hero{order:2}
+		}
+
+		@media (max-width:480px){
+			.hero h1{font-size:32px}
+			.card{padding:20px}
+		}
+	</style>
+</head>
+<body>
+	<div class="nav">
+		<div class="logo">netflix</div>
+		<select class="lang" aria-label="Select language">
+			<option>English</option>
+			<option>Español</option>
+			<option>Français</option>
+		</select>
+	</div>
+
+	<main class="wrap" role="main">
+		<section class="hero" aria-hidden="false">
+			<h1>Unlimited movies, TV shows and more.</h1>
+			<p>Watch anywhere. Cancel anytime.</p>
+			<p style="color:#e6e6e6;opacity:0.9;margin-top:10px">Ready to watch? Enter your email to create or restart your membership.</p>
+		</section>
+
+		<aside class="card" aria-labelledby="signin-title">
+			<h2 id="signin-title">Sign In</h2>
+			<form id="signin-form" action="#" method="post">
+				<div>
+					<label for="email">Email address</label>
+					<input id="email" name="email" type="email" inputmode="email" autocomplete="email" required placeholder="you@example.com">
+				</div>
+
+				<div>
+					<label for="pw">Password</label>
+					<input id="pw" name="password" type="password" autocomplete="current-password" required placeholder="Your password">
+				</div>
+
+				<div class="controls">
+					<label class="checkbox"><input type="checkbox" name="remember"> Remember me</label>
+					<a href="#" style="color:#f5f5f5;text-decoration:underline;font-size:14px">Need help?</a>
+				</div>
+
+						<button type="submit" class="btn">Sign In</button>
+
+								<div id="form-msg" role="alert" aria-live="polite" style="margin-top:12px;display:none;font-size:14px"></div>
+
+								<div class="help">New to Netflix? <a href="signup.html" class="ghost" style="margin-left:8px;display:inline-block;text-decoration:none;color:#fff;border-radius:6px;padding:8px 10px;border:1px solid rgba(255,255,255,0.08)">Sign up now</a></div>
+			</form>
+		</aside>
+	</main>
+  
+			<script>
+				// Small client-side validation + demo submit (no network calls)
+				(function(){
+					var form = document.getElementById('signin-form');
+					var msg = document.getElementById('form-msg');
+					if(!form || !msg) return;
+
+					function showError(text){
+						msg.style.display = 'block';
+						msg.style.color = '#f87171'; // red-400
+						msg.textContent = text;
+					}
+
+					function showSuccess(text){
+						msg.style.display = 'block';
+						msg.style.color = '#10b981'; // green-500
+						msg.textContent = text;
+					}
+
+					form.addEventListener('submit', function(e){
+						e.preventDefault();
+						msg.style.display = 'none';
+						msg.textContent = '';
+
+						var email = (form.email && form.email.value || '').trim();
+						var pw = (form.password && form.password.value || '');
+
+						var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+						if(!emailRe.test(email)){
+							showError('Please enter a valid email address.');
+							if(form.email) form.email.focus();
+							return;
+						}
+
+						if(pw.length < 6){
+							showError('Password must be at least 6 characters.');
+							if(form.password) form.password.focus();
+							return;
+						}
+
+						// Simulate a network call
+						var submitBtn = form.querySelector('button[type=submit]');
+						if(submitBtn) submitBtn.disabled = true;
+						showSuccess('Signing in...');
+
+								setTimeout(function(){
+									showSuccess('Signed in (demo). Redirecting...');
+									// Simulated redirect to demo home
+									window.location.href = 'home.html';
+									if(submitBtn) submitBtn.disabled = false;
+								}, 900);
+					});
+				})();
+			</script>
+</body>
+</html>
+

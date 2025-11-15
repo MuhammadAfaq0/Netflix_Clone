@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Netflix Clone — Sign Up</title>
+  <style>
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#111,#000);color:#fff}
+    .card{max-width:420px;margin:60px auto;padding:24px;background:rgba(255,255,255,0.03);border-radius:8px}
+    h1{margin:0 0 12px;color:#e50914}
+    label{display:block;font-size:13px;margin:10px 0 6px;color:#ddd}
+    input{width:100%;padding:10px;border-radius:6px;border:0;background:#111;color:#fff}
+    .btn{margin-top:14px;width:100%;padding:12px;border-radius:6px;border:0;background:#e50914;color:#fff;font-weight:600}
+    .msg{margin-top:12px;font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Create Account</h1>
+    <form id="signup-form">
+      <label for="name">Your name</label>
+      <input id="name" name="name" type="text" placeholder="Full name" required>
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="you@example.com" required>
+
+      <label for="pw">Password</label>
+      <input id="pw" name="password" type="password" placeholder="At least 6 characters" required>
+
+      <button class="btn" type="submit">Create Account</button>
+      <div id="msg" class="msg" aria-live="polite"></div>
+    </form>
+    <p style="margin-top:12px;color:#bbb">Already have an account? <a href="index.html" style="color:#fff;text-decoration:underline">Sign in</a></p>
+  </div>
+
+  <script>
+    (function(){
+      var form = document.getElementById('signup-form');
+      var msg = document.getElementById('msg');
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        msg.style.color = '#fff';
+        msg.textContent = 'Creating account...';
+        var btn = form.querySelector('button[type=submit]');
+        btn.disabled = true;
+        setTimeout(function(){
+          msg.style.color = '#10b981';
+          msg.textContent = 'Account created (demo). Redirecting to sign in...';
+          btn.disabled = false;
+          setTimeout(function(){ window.location.href = 'index.html'; }, 900);
+        }, 900);
+      });
+    })();
+  </script>
+</body>
+</html>
